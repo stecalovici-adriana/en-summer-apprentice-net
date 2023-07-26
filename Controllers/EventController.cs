@@ -40,9 +40,9 @@ namespace TicketManagerSystem.Api.Controllers
 
         
         [HttpGet]
-        public ActionResult<EventDTO> GetById(int id)
+        public async Task<ActionResult<EventDTO>> GetById(int id)
         {
-            var @event = _eventRepository.GetById(id);
+            var @event = await _eventRepository.GetById(id);
 
             if (@event == null)
             {

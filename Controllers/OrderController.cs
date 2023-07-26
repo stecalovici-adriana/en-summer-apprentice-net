@@ -36,9 +36,9 @@ namespace TicketManagerSystem.Api.Controllers
             return Ok(dtoOrders);
         }
         [HttpGet]
-        public ActionResult<OrderDTO> GetById(int id)
+        public async Task<ActionResult<OrderDTO>> GetById(int id)
         {
-            var @order = _orderRepository.GetById(id);
+            var @order = await _orderRepository.GetById(id);
 
             if (@order == null)
             {
@@ -68,7 +68,9 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
             _mapper.Map(orderPatch, orderEntity);
+            if(orderPatch.NumberOfTickets!=0) orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
             _orderRepository.Update(orderEntity);
+            return NoContent();
             return Ok(orderEntity);
         }
 

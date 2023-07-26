@@ -38,7 +38,7 @@ namespace TicketManagerSystem.Api.Repositories
 
         public void Update(Event @event)
         {
-            _dbContext.Entry(@event).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _dbContext.Entry(@event).State = EntityState.Modified;
             _dbContext.SaveChanges();
         }
     }
