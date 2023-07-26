@@ -6,12 +6,12 @@ namespace TicketManagerSystem.Api.Repositories
     {
         IEnumerable<Event> GetAll();
 
-        Event GetById(int id);
+        Task<Event> GetById(int id);
 
         int Add(Event @event);
 
         void Update(Event @event);
 
-        int Delete(int id);
+        void Delete(Event @event);
     }
 }

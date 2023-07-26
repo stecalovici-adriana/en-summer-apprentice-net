@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagerSystem.Api.Models;
 using TicketManagerSystem.Api.Models.DTO;
 using TicketManagerSystem.Api.Repositories;
 
@@ -10,9 +12,11 @@ namespace TicketManagerSystem.Api.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
-        public OrderController(IOrderRepository orderRepository)
+        private readonly IMapper _mapper;
+        public OrderController(IOrderRepository orderRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
         [HttpGet]
         public ActionResult<List<OrderDTO>> GetAll()
@@ -41,15 +45,44 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
 
-            var dtoOrder = new OrderDTO()
+            /*var dtoOrder = new OrderDTO()
             {
                 OrderID = @order.OrderId,
                 NumberOfTickets = @order.NumberOfTickets,
                 TotalPrice = @order.TotalPrice,
                 OrderedAt = @order.OrderedAt
-            };
+            };*/
 
-            return Ok(dtoOrder);
+            var orderDTO = _mapper.Map<OrderDTO>(@order);
+
+            return Ok(orderDTO);
+        }
+
+        [HttpPatch]
+        public async Task<ActionResult<OrderPatchDTO>> Patch(OrderPatchDTO orderPatch)
+        {
+            var orderEntity = await _orderRepository.GetById(orderPatch.OrderID);
+
+            if (orderEntity == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(orderPatch, orderEntity);
+            _orderRepository.Update(orderEntity);
+            return Ok(orderEntity);
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var orderEntity = await _orderRepository.GetById(id);
+
+            if (orderEntity == null)
+            {
+                return NotFound();
+            }
+            _orderRepository.Delete(orderEntity);
+            return NoContent();
         }
     }
 }

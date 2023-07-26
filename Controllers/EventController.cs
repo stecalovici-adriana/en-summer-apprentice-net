@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using TicketManagerSystem.Api.Models.DTO;
@@ -11,10 +12,12 @@ namespace TicketManagerSystem.Api.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IMapper _mapper;
 
-        public EventController(IEventRepository eventRepository)
+        public EventController(IEventRepository eventRepository, IMapper mapper)
         {
             _eventRepository = eventRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -46,17 +49,44 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
 
-            var dtoEvent = new EventDTO()
+           /* var dtoEvent = new EventDTO()
             {
                 EventID = @event.EventId,
                 EventDescription = @event.EventDescription,
                 EventName = @event.EventName,
                 EventType = @event.EventType?.EventTypeName ?? string.Empty,
                 Venue = @event.Venue?.Location ?? string.Empty
-            };
+            };*/
 
-            return Ok(dtoEvent);
+            var eventDTO = _mapper.Map<EventDTO>(@event);
+
+            return Ok(eventDTO);
+        }
+        [HttpPatch]
+        public async Task<ActionResult<EventPatchDTO>> Patch(EventPatchDTO eventPatch)
+        {
+            var eventEntity = await _eventRepository.GetById(eventPatch.EventID);
+
+            if (eventEntity == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(eventPatch, eventEntity);
+            _eventRepository.Update(eventEntity);
+            return Ok(eventEntity);
         }
 
+        [HttpDelete]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var eventEntity = await _eventRepository.GetById(id);
+
+            if (eventEntity == null)
+            {
+                return NotFound();
+            }
+            _eventRepository.Delete(eventEntity);
+            return NoContent();
+        }
     }
 }
