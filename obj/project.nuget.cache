@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4Ae2FI7GgnIp0+qsYGbsvckG6cKzHMFCDWCEP15DYVx3ZTo39jMPreprz3HTrUd8/aLKysUEqUXYa01hprBauQ==",
+  "dgSpecHash": "lU19dyswzKF4ayKEwdc2agonFDPDL0UFY6RRjLmKSzH9u5vOrPfoow2bemUtWUzqu6NHpnSy0PO5E+cL4Gqyfg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Lenovo\\Desktop\\en-summer-apprentice-net\\TicketManagerSystem.Api\\TicketManagerSystem.Api.csproj",
   "expectedPackageFiles": [
@@ -46,6 +46,9 @@
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\Lenovo\\.nuget\\packages\\nlog\\5.2.2\\nlog.5.2.2.nupkg.sha512",
+    "C:\\Users\\Lenovo\\.nuget\\packages\\nlog.extensions.logging\\5.3.2\\nlog.extensions.logging.5.3.2.nupkg.sha512",
+    "C:\\Users\\Lenovo\\.nuget\\packages\\nlog.web.aspnetcore\\5.3.2\\nlog.web.aspnetcore.5.3.2.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",

@@ -13,11 +13,12 @@ namespace TicketManagerSystem.Api.Controllers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
-
-        public EventController(IEventRepository eventRepository, IMapper mapper)
+        private readonly ILogger _logger;   
+        public EventController(IEventRepository eventRepository, IMapper mapper, ILogger<EventController> logger)
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
+            _logger = logger;   
         }
 
         [HttpGet]
@@ -38,7 +39,7 @@ namespace TicketManagerSystem.Api.Controllers
             return Ok(dtoEvents);
         }
 
-        
+
         [HttpGet]
         public async Task<ActionResult<EventDTO>> GetById(int id)
         {
@@ -49,22 +50,18 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
 
-           /* var dtoEvent = new EventDTO()
-            {
-                EventID = @event.EventId,
-                EventDescription = @event.EventDescription,
-                EventName = @event.EventName,
-                EventType = @event.EventType?.EventTypeName ?? string.Empty,
-                Venue = @event.Venue?.Location ?? string.Empty
-            };*/
+
 
             var eventDTO = _mapper.Map<EventDTO>(@event);
 
             return Ok(eventDTO);
         }
+
         [HttpPatch]
         public async Task<ActionResult<EventPatchDTO>> Patch(EventPatchDTO eventPatch)
         {
+            if (eventPatch == null)
+                throw new ArgumentNullException(nameof(eventPatch));
             var eventEntity = await _eventRepository.GetById(eventPatch.EventID);
 
             if (eventEntity == null)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using TicketManagerSystem.Api.Exceptions;
 using TicketManagerSystem.Api.Models;
 
 namespace TicketManagerSystem.Api.Repositories
@@ -29,16 +30,17 @@ namespace TicketManagerSystem.Api.Repositories
             return orders;
         }
 
-        public Task<Order> GetById(int id)
+        public async Task<Order> GetById(int id)
         {
-            var @order = _dbContext.Orders.Where(e => e.OrderId == id).FirstOrDefaultAsync();
-
+            var @order = await _dbContext.Orders.Where(e => e.OrderId == id).FirstOrDefaultAsync();
+            if (@order == null)
+                throw new EntityNotFoundException(id, nameof(Order));
             return @order;
         }
 
         public void Update(Order @order)
         {
-            _dbContext.Entry(@order).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _dbContext.Entry(@order).State = EntityState.Modified;
             _dbContext.SaveChanges();
         }
     }

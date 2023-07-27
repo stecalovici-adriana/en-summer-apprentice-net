@@ -13,10 +13,12 @@ namespace TicketManagerSystem.Api.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
-        public OrderController(IOrderRepository orderRepository, IMapper mapper)
+        private readonly ILogger _logger;
+        public OrderController(IOrderRepository orderRepository, IMapper mapper, ILogger<EventController> logger)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _logger = logger;
         }
         [HttpGet]
         public ActionResult<List<OrderDTO>> GetAll()
@@ -45,13 +47,7 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
 
-            /*var dtoOrder = new OrderDTO()
-            {
-                OrderID = @order.OrderId,
-                NumberOfTickets = @order.NumberOfTickets,
-                TotalPrice = @order.TotalPrice,
-                OrderedAt = @order.OrderedAt
-            };*/
+
 
             var orderDTO = _mapper.Map<OrderDTO>(@order);
 
@@ -61,6 +57,8 @@ namespace TicketManagerSystem.Api.Controllers
         [HttpPatch]
         public async Task<ActionResult<OrderPatchDTO>> Patch(OrderPatchDTO orderPatch)
         {
+            if (orderPatch == null)
+                throw new ArgumentNullException(nameof(orderPatch));
             var orderEntity = await _orderRepository.GetById(orderPatch.OrderID);
 
             if (orderEntity == null)
@@ -68,9 +66,9 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
             _mapper.Map(orderPatch, orderEntity);
-            if(orderPatch.NumberOfTickets!=0) orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
+            //if(orderPatch.NumberOfTickets!=0) orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
             _orderRepository.Update(orderEntity);
-            return NoContent();
+            //return NoContent();
             return Ok(orderEntity);
         }
 
