@@ -26,16 +26,7 @@ namespace TicketManagerSystem.Api.Controllers
         {
             var events = _eventRepository.GetAll();
 
-            var dtoEvents = events.Select(e => new EventDTO()
-            {
-                EventID = e.EventId,
-                EventDescription = e.EventDescription,
-                EventName = e.EventName,
-                EventType = e.EventType?.EventTypeName ?? string.Empty,
-                Venue = e.Venue?.Location ?? string.Empty
-            });
-
-
+            var dtoEvents = events.Select(e => _mapper.Map<EventDTO>(e));
             return Ok(dtoEvents);
         }
 
