@@ -6,7 +6,7 @@ namespace TicketManagerSystem.Api.Repositories
     {
         IEnumerable<Order> GetAll();
 
-        Task<Order> GetById(int id);
+        Task<Order> GetByOrderId(int id);
 
         int Add(Order @order);
 

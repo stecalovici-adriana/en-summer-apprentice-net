@@ -30,7 +30,7 @@ namespace TicketManagerSystem.Api.Repositories
             return events;
         }
 
-        public async Task<Event> GetById(int id)
+        public async Task<Event> GetByEventId(int id)
         {
             var @event = await _dbContext.Events.Where(e => e.EventId == id).FirstOrDefaultAsync();
 

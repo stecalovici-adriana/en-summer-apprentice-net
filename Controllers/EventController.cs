@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
+using TicketManagerSystem.Api.Exceptions;
 using TicketManagerSystem.Api.Models.DTO;
 using TicketManagerSystem.Api.Repositories;
 
@@ -13,39 +16,45 @@ namespace TicketManagerSystem.Api.Controllers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;   
-        public EventController(IEventRepository eventRepository, IMapper mapper, ILogger<EventController> logger)
+        //private readonly ILogger _logger;   
+        public EventController(IEventRepository eventRepository, IMapper mapper)//ILogger<EventController> logger
         {
-            _eventRepository = eventRepository;
-            _mapper = mapper;
-            _logger = logger;   
+            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(_mapper));
+            //_logger = logger;   
         }
 
         [HttpGet]
         public ActionResult<List<EventDTO>> GetAll()
         {
             var events = _eventRepository.GetAll();
-
+           
             var dtoEvents = events.Select(e => _mapper.Map<EventDTO>(e));
             return Ok(dtoEvents);
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<EventDTO>> GetById(int id)
+        public async Task<ActionResult<EventDTO>> GetByEventId(int id)
         {
-            var @event = await _eventRepository.GetById(id);
-
-            if (@event == null)
+            try
             {
-                return NotFound();
+                var @event = await _eventRepository.GetByEventId(id);
+
+                if (@event == null)
+                {
+                    return NoContent();
+                }
+
+
+
+                var eventDTO = _mapper.Map<EventDTO>(@event);
+                //Task.Delay(TimeSpan.FromSeconds(2));
+                return Ok(eventDTO);
+            }catch(EntityNotFoundException ex)
+            {
+                return NotFound(new { ErrorMessage = ex.Message });
             }
-
-
-
-            var eventDTO = _mapper.Map<EventDTO>(@event);
-
-            return Ok(eventDTO);
         }
 
         [HttpPatch]
@@ -53,21 +62,24 @@ namespace TicketManagerSystem.Api.Controllers
         {
             if (eventPatch == null)
                 throw new ArgumentNullException(nameof(eventPatch));
-            var eventEntity = await _eventRepository.GetById(eventPatch.EventID);
+            var eventEntity = await _eventRepository.GetByEventId(eventPatch.EventID);
 
             if (eventEntity == null)
             {
                 return NotFound();
             }
+           // if (!eventPatch.EventName.IsNullOrEmpty()) eventEntity.EventName = eventPatch.EventName;
+            //if (!eventPatch.EventDescription.IsNullOrEmpty()) eventEntity.EventDescription = eventPatch.EventDescription;
             _mapper.Map(eventPatch, eventEntity);
             _eventRepository.Update(eventEntity);
             return Ok(eventEntity);
+           // return NoContent(); 
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            var eventEntity = await _eventRepository.GetById(id);
+            var eventEntity = await _eventRepository.GetByEventId(id);
 
             if (eventEntity == null)
             {

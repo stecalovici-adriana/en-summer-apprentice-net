@@ -6,7 +6,7 @@ namespace TicketManagerSystem.Api.Repositories
     {
         IEnumerable<Event> GetAll();
 
-        Task<Event> GetById(int id);
+        Task<Event> GetByEventId(int id);
 
         int Add(Event @event);
 

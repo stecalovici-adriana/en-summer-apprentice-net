@@ -30,7 +30,7 @@ namespace TicketManagerSystem.Api.Repositories
             return orders;
         }
 
-        public async Task<Order> GetById(int id)
+        public async Task<Order> GetByOrderId(int id)
         {
             var @order = await _dbContext.Orders.Where(e => e.OrderId == id).FirstOrDefaultAsync();
             if (@order == null)

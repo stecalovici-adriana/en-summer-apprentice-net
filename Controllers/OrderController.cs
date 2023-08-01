@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagerSystem.Api.Exceptions;
 using TicketManagerSystem.Api.Models;
 using TicketManagerSystem.Api.Models.DTO;
 using TicketManagerSystem.Api.Repositories;
@@ -13,45 +14,34 @@ namespace TicketManagerSystem.Api.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
-        public OrderController(IOrderRepository orderRepository, IMapper mapper, ILogger<EventController> logger)
+        public OrderController(IOrderRepository orderRepository, IMapper mapper) // ILogger<EventController> logger
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
-            _logger = logger;
+
         }
         [HttpGet]
         public ActionResult<List<OrderDTO>> GetAll()
         {
             var orders = _orderRepository.GetAll();
 
-            var dtoOrders = orders.Select(o => new OrderDTO()
-            {
-                OrderID = o.OrderId,
-                NumberOfTickets = o.NumberOfTickets,
-                TotalPrice = o.TotalPrice,
-                OrderedAt = o.OrderedAt
-           
-            });
-
-
+            var dtoOrders = orders.Select(o => _mapper.Map<OrderDTO>(o));
             return Ok(dtoOrders);
         }
         [HttpGet]
-        public async Task<ActionResult<OrderDTO>> GetById(int id)
+        public async Task<ActionResult<OrderDTO>> GetByOrderId(int id)
         {
-            var @order = await _orderRepository.GetById(id);
-
-            if (@order == null)
+            try
             {
-                return NotFound();
+                var @order = await _orderRepository.GetByOrderId(id);
+                var orderDto = _mapper.Map<OrderDTO>(@order);
+                return Ok(orderDto);
             }
-
-
-
-            var orderDTO = _mapper.Map<OrderDTO>(@order);
-
-            return Ok(orderDTO);
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { ErrorMessage = ex.Message });
+         
+            }
         }
 
         [HttpPatch]
@@ -59,23 +49,21 @@ namespace TicketManagerSystem.Api.Controllers
         {
             if (orderPatch == null)
                 throw new ArgumentNullException(nameof(orderPatch));
-            var orderEntity = await _orderRepository.GetById(orderPatch.OrderID);
+            var orderEntity = await _orderRepository.GetByOrderId(orderPatch.OrderID);
 
             if (orderEntity == null)
             {
                 return NotFound();
             }
-            _mapper.Map(orderPatch, orderEntity);
-            //if(orderPatch.NumberOfTickets!=0) orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
+            if(orderPatch.NumberOfTickets!=0) orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
             _orderRepository.Update(orderEntity);
-            //return NoContent();
-            return Ok(orderEntity);
+            return NoContent();
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            var orderEntity = await _orderRepository.GetById(id);
+            var orderEntity = await _orderRepository.GetByOrderId(id);
 
             if (orderEntity == null)
             {
