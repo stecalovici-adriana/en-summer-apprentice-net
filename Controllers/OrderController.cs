@@ -23,10 +23,10 @@ namespace TicketManagerSystem.Api.Controllers
         [HttpGet]
         public ActionResult<List<OrderDTO>> GetAll()
         {
-            var orders = _orderRepository.GetAll();
 
-            var dtoOrders = orders.Select(o => _mapper.Map<OrderDTO>(o));
-            return Ok(dtoOrders);
+            var orders = _orderRepository.GetAll().ToList();
+            var ordersDTO = _mapper.Map<List<OrderDTO>>(orders);
+            return Ok(ordersDTO);
         }
         [HttpGet]
         public async Task<ActionResult<OrderDTO>> GetByOrderId(int id)

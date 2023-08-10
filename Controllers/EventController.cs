@@ -69,12 +69,9 @@ namespace TicketManagerSystem.Api.Controllers
             {
                 return NotFound();
             }
-           // if (!eventPatch.EventName.IsNullOrEmpty()) eventEntity.EventName = eventPatch.EventName;
-            //if (!eventPatch.EventDescription.IsNullOrEmpty()) eventEntity.EventDescription = eventPatch.EventDescription;
             _mapper.Map(eventPatch, eventEntity);
             _eventRepository.Update(eventEntity);
             return Ok(eventEntity);
-           // return NoContent(); 
         }
 
         [HttpDelete]
