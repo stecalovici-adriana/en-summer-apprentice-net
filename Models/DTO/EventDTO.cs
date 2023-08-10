@@ -8,6 +8,6 @@
         public string EventType { get; set; } = string.Empty;
         public string Venue { get; set; }
 
-
+        public List<TicketCategoryDTO> TicketCategory { get; set; }
     }
 }

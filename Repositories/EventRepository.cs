@@ -25,7 +25,12 @@ namespace TicketManagerSystem.Api.Repositories
 
         public IEnumerable<Event> GetAll()
         {
-            var events = _dbContext.Events;
+            var events = _dbContext.Events
+                .Include(e => e.EventType)
+                .Where(e => e.EventTypeId != null)
+                .Include(e => e.Venue)
+                .Where(e => e.VenueId != null)
+                .ToList();
 
             return events;
         }

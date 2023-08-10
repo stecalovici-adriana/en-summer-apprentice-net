@@ -28,10 +28,11 @@ namespace TicketManagerSystem.Api.Controllers
         public ActionResult<List<EventDTO>> GetAll()
         {
             var events = _eventRepository.GetAll();
-           
-            var dtoEvents = events.Select(e => _mapper.Map<EventDTO>(e));
-            return Ok(dtoEvents);
+
+            var eventDto = events.Select(e => _mapper.Map<EventDTO>(e));
+            return Ok(eventDto);
         }
+
 
 
         [HttpGet]
