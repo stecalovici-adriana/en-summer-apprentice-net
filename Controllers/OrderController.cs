@@ -14,10 +14,13 @@ namespace TicketManagerSystem.Api.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
-        public OrderController(IOrderRepository orderRepository, IMapper mapper) // ILogger<EventController> logger
+        private readonly ITicketCategoryRepository _ticketCategoryRepository;
+
+        public OrderController(IOrderRepository orderRepository, IMapper mapper, ITicketCategoryRepository ticketCategoryRepository) // ILogger<EventController> logger
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _ticketCategoryRepository = ticketCategoryRepository;
 
         }
         [HttpGet]
@@ -56,8 +59,15 @@ namespace TicketManagerSystem.Api.Controllers
                 return NotFound();
             }
             if(orderPatch.NumberOfTickets!=0) orderEntity.NumberOfTickets = orderPatch.NumberOfTickets;
+            if (orderPatch.TicketCategoryID != 0) orderEntity.TicketCategoryId = orderPatch.TicketCategoryID;
+            var priceOfTicket = _ticketCategoryRepository.GetPriceByTicketCategoryId(orderPatch.TicketCategoryID);
+
+            if (orderEntity.TotalPrice != 0) orderEntity.TotalPrice = orderPatch.NumberOfTickets * priceOfTicket;
+
             _orderRepository.Update(orderEntity);
-            return NoContent();
+            var orderEntityDto = _mapper.Map<OrderDTO>(orderEntity);
+
+            return Ok(orderEntityDto);
         }
 
         [HttpDelete]

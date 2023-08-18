@@ -21,6 +21,7 @@ builder.Host.UseNLog();
 
 builder.Services.AddTransient<IEventRepository, EventRepository>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddTransient<ITicketCategoryRepository, TicketCategoryRepository>();
 
 builder.Services.AddCors(options =>
 {

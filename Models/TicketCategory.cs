@@ -11,7 +11,7 @@ public partial class TicketCategory
 
     public string? Description { get; set; }
 
-    public decimal? Price { get; set; }
+    public decimal Price { get; set; }
 
     public virtual Event Event { get; set; } = null!;
 
